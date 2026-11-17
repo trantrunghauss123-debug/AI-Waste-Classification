@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EcoAI - Phân loại rác thông minh</title>
+
+    <style>
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background: #f4f8f5;
+
+            color: #24352b;
+
+        }
+
+        header {
+
+            background: white;
+
+            padding: 20px 8%;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow: 0 2px 12px #0000000a;
+
+        }
+
+        .logo {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            color: #238653;
+
+        }
+
+        nav a {
+
+            margin-left: 25px;
+
+            text-decoration: none;
+
+            color: #405348;
+
+        }
+
+        .hero {
+
+            text-align: center;
+
+            padding: 75px 20px 45px;
+
+        }
+
+        .hero h1 {
+
+            font-size: 42px;
+
+            margin-bottom: 18px;
+
+            color: #206b43;
+
+        }
+
+        .hero p {
+
+            color: #66766c;
+
+            font-size: 17px;
+
+            line-height: 1.7;
+
+        }
+
+        .container {
+
+            max-width: 850px;
+
+            margin: 0 auto 70px;
+
+            padding: 35px;
+
+            background: white;
+
+            border-radius: 22px;
+
+            box-shadow: 0 8px 30px #0000000c;
+
+        }
+
+        .upload {
+
+            border: 2px dashed #91c9a5;
+
+            background: #f5fbf6;
+
+            padding: 45px 20px;
+
+            border-radius: 18px;
+
+            text-align: center;
+
+        }
+
+        .upload h2 {
+
+            color: #287b4b;
+
+            margin-bottom: 12px;
+
+        }
+
+        .upload p {
+
+            color: #75857a;
+
+            margin-bottom: 22px;
+
+        }
+
+        input {
+
+            max-width: 100%;
+
+            margin-bottom: 20px;
+
+        }
+
+        button {
+
+            background: #29965a;
+
+            color: white;
+
+            border: none;
+
+            padding: 13px 25px;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+        }
+
+        button:hover {
+
+            background: #207a48;
+
+        }
+
+        #preview {
+
+            display: none;
+
+            max-width: 100%;
+
+            max-height: 300px;
+
+            margin: 20px auto;
+
+            border-radius: 12px;
+
+        }
+
+        #result {
+
+            display: none;
+
+            margin-top: 25px;
+
+            padding: 20px;
+
+            background: #eff8f1;
+
+            border-radius: 14px;
+
+            text-align: center;
+
+        }
+
+        footer {
+
+            text-align: center;
+
+            padding: 25px;
+
+            color: #718077;
+
+        }
+
+        @media(max-width: 600px) {
+
+            header {
+
+                padding: 18px;
+
+            }
+          display: none;
+
+            }
+
+            .hero h1 {
+
+                font-size: 30px;
+
+            }
+
+            .container {
+
+                margin: 0 15px 40px;
+
+                padding: 20px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">♻ EcoAI</div>
+
+    <nav>
+
+        <a href="#">Trang chủ</a>
+
+        <a href="#analyze">Phân loại rác</a>
+
+        <a href="#about">Giới thiệu</a>
+
+    </nav>
+
+</header>
+
+<section class="hero">
+
+    <h1>Phân loại rác thông minh cùng AI</h1>
+
+    <p>
+
+        Nhận diện rác thải bằng hình ảnh.
+
+        <br>
+
+        Chung tay xây dựng môi trường xanh và bền vững.
+
+    </p>
+
+</section>
+
+<section class="container" id="analyze">
+
+    <div class="upload">
+
+        <h2>🔍 Phân tích hình ảnh rác thải</h2>
+
+        <p>Tải hình ảnh lên để bắt đầu nhận diện</p>
+
+        <input type="file" id="imageInput" accept="image/*">
+
+        <br>
+
+        <img id="preview" alt="Ảnh xem trước">
+
+        <br>
+
+        <button onclick="analyzeImage()">
+
+            Bắt đầu phân tích
+
+        </button>
+
+    </div>
+
+    <div id="result">
+
+        <h2>Kết quả nhận diện</h2>
+
+        <p id="resultText"></p>
+
+    </div>
+
+</section>
+
+<section class="hero" id="about">
+
+    <h2>Vì một hành tinh xanh</h2>
+
+    <p>Phân loại đúng - Tái chế tốt - Môi trường sạch.</p>
+
+</section>
+
+<footer>
+
+    © 2026 EcoAI - AI Waste Classification
+
+</footer>
+
+<script>
+
+    const imageInput = document.getElementById("imageInput");
+
+    const preview = document.getElementById("preview");
+
+    imageInput.addEventListener("change", function() {
+
+        const file = this.files[0];
+
+        if (file) {
+
+            preview.src = URL.createObjectURL(file);
+
+            preview.style.display = "block";
+
+            document.getElementById("result").style.display = "none";
+
+        }
+
+    });
+
+    function analyzeImage() {
+
+        if (!imageInput.files.length) {
+
+            alert("Vui lòng chọn hình ảnh trước!");
+
+            return;
+
+        }
+
+        alert("Giao diện đã sẵn sàng! AI sẽ được tích hợp ở bước tiếp theo.");
+
+    }
+
+</script>
+
+</body>
+
+</html>
+
+            nav {
