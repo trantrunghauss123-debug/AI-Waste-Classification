@@ -1,591 +1,324 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EcoAI - Phân loại rác thông minh</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<style>
 :root {
-  --green: #16834b;
-  --dark: #104b32;
-  --light: #eaf7ee;
-  --text: #20352a;
-  --muted: #718078;
+  --green: #168b45;
+  --green-dark: #086b32;
+  --green-light: #e8f7ec;
+  --background: #f6faf6;
+  --text: #17251c;
+  --muted: #718076;
   --white: #ffffff;
+  --border: #e2ece4;
 }
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
-
-html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Be Vietnam Pro', sans-serif;
-  background: #f7faf7;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
   color: var(--text);
+  line-height: 1.6;
 }
 
-button { cursor: pointer; font-family: inherit; }
-a { text-decoration: none; color: inherit; }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-nav {
-  height: 76px;
-  padding: 0 7%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
+button, input {
+  font: inherit;
+}
+
+header {
+  background: rgba(255,255,255,.97);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 100;
-  box-shadow: 0 3px 20px #12351b0b;
+  z-index: 10;
+}
+
+.nav {
+  max-width: 1200px;
+  margin: auto;
+  padding: 15px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--green);
-  font-size: 23px;
+  font-size: 25px;
   font-weight: 800;
+  color: var(--green);
 }
 
-.logo-icon {
-  width: 43px;
-  height: 43px;
-  background: var(--light);
-  border-radius: 13px;
-  display: grid;
-  place-items: center;
-  font-size: 25px;
+.logo span {
+  color: var(--text);
 }
 
 .nav-links {
   display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
   align-items: center;
-  gap: 28px;
 }
 
 .nav-links a {
-  font-size: 13px;
+  padding: 9px 14px;
+  border-radius: 30px;
   font-weight: 600;
-  color: #56665c;
-  transition: .2s;
+  font-size: 14px;
 }
 
 .nav-links a:hover,
-.nav-links a.active { color: var(--green); }
-
-.login {
-  background: var(--green);
-  color: white !important;
-  padding: 12px 21px;
-  border-radius: 10px;
+.nav-links a.active {
+  background: var(--green-light);
+  color: var(--green-dark);
 }
 
-.menu-btn {
-  display: none;
-  border: 0;
-  background: none;
-  font-size: 25px;
+.container {
+  width: min(1120px, 92%);
+  margin: 35px auto;
 }
-
-section { scroll-margin-top: 85px; }
 
 .hero {
-  padding: 75px 7%;
-  background: linear-gradient(120deg,#edf8ef,#dcefe1);
+  background: linear-gradient(120deg, #e8f7e9, #f7fff8);
+  border-radius: 26px;
+  padding: 55px 45px;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 30px;
   align-items: center;
-  gap: 40px;
-  min-height: 530px;
 }
 
 .eyebrow {
-  display: inline-block;
-  padding: 9px 15px;
-  border-radius: 30px;
-  background: #d4efdc;
   color: var(--green);
-  font-size: 12px;
   font-weight: 700;
-  margin-bottom: 22px;
+  font-size: 13px;
+  letter-spacing: 1px;
 }
 
-.hero h1 {
-  font-size: clamp(35px,4.5vw,57px);
-  line-height: 1.22;
-  color: var(--dark);
-  margin-bottom: 22px;
+h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.15;
+  margin: 16px 0;
 }
 
-.hero h1 span { color: #27a35c; }
+h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
 
-.hero p {
-  color: #63736a;
-  line-height: 1.9;
-  font-size: 15px;
-  max-width: 530px;
-  margin-bottom: 28px;
+h3 {
+  margin-bottom: 8px;
+}
+
+p {
+  color: var(--muted);
+}
+
+.hero-image {
+  min-height: 260px;
+  border-radius: 22px;
+  background: linear-gradient(140deg, #b7e9c0, #e5f7e8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 100px;
+}
+
+.btn {
+  display: inline-block;
+  border: 0;
+  border-radius: 30px;
+  background: var(--green);
+  color: white;
+  padding: 12px 23px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: .2s;
+  text-align: center;
+}
+
+.btn:hover {
+  background: var(--green-dark);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: white;
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+
+.btn-outline:hover {
+  color: white;
 }
 
 .actions {
   display: flex;
-  gap: 13px;
+  gap: 12px;
   flex-wrap: wrap;
+  margin-top: 25px;
 }
 
-.btn {
-  border: 0;
-  border-radius: 11px;
-  padding: 14px 22px;
-  font-size: 13px;
-  font-weight: 700;
-  transition: .25s;
-}
-
-.btn:hover { transform: translateY(-3px); }
-
-.primary {
-  background: var(--green);
-  color: white;
-  box-shadow: 0 7px 18px #16834b35;
-}
-
-.secondary {
-  background: white;
-  color: var(--green);
-  border: 1px solid #cde5d3;
-}
-
-.hero-image {
-  height: 350px;
-  border-radius: 25px;
-  background:
-  linear-gradient(0deg,#073c2460,#073c2400),
-  url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1000')
-  center/cover;
-   box-shadow: 0 20px 50px #174e3030;
-  display: flex;
-  align-items: end;
-  padding: 25px;
-}
-
-.image-caption {
-  color: white;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.stats {
+.grid {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
-  padding: 0 7%;
-  margin-top: -1px;
+  margin-top: 25px;
 }
 
-.stat {
+.card {
   background: white;
-  border-radius: 14px;
+  border: 1px solid var(--border);
+  border-radius: 19px;
   padding: 24px;
-  text-align: center;
-  box-shadow: 0 5px 25px #183b2008;
+  box-shadow: 0 5px 18px rgba(20,70,35,.04);
 }
 
-.stat strong {
-  display: block;
-  font-size: 25px;
-  color: var(--green);
-  margin-bottom: 5px;
-}
-
-.stat span {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.section {
-  padding: 90px 7%;
+.card-icon {
+  font-size: 35px;
+  margin-bottom: 10px;
 }
 
 .section-title {
-  text-align: center;
-  margin-bottom: 45px;
+  margin: 45px 0 18px;
 }
 
-.section-title small {
-  color: var(--green);
-  font-weight: 700;
-  letter-spacing: 2px;
+.page-heading {
+  margin-bottom: 25px;
 }
 
-.section-title h2 {
-  font-size: 31px;
-  color: var(--dark);
-  margin: 12px 0;
+.page-heading p {
+  margin-top: 8px;
 }
 
-.section-title p {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.8;
-}
-
-.classify {
+.panel {
   background: white;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 28px;
+  margin-bottom: 22px;
 }
 
 .upload-box {
-  max-width: 850px;
-  margin: auto;
-  background: #f9fcf9;
-  border: 2px dashed #a8d4b4;
-  border-radius: 22px;
-  padding: 45px 25px;
+  border: 2px dashed #a8cdb0;
+  background: #f8fcf8;
+  border-radius: 18px;
+  padding: 35px 15px;
   text-align: center;
 }
 
-.upload-icon {
-  width: 75px;
-  height: 75px;
-  background: #e4f5e8;
-  border-radius: 20px;
-  display: grid;
-  place-items: center;
-  font-size: 35px;
-  margin: 0 auto 20px;
+.upload-box input {
+  margin-top: 18px;
+  max-width: 100%;
 }
-
-.upload-box h3 {
-  color: var(--dark);
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.upload-box p {
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 24px;
-}
-
-#fileInput { display: none; }
 
 .preview {
-  max-width: 350px;
-  margin: 25px auto 0;
   display: none;
-}
-
-.preview img {
-  width: 100%;
-  max-height: 250px;
+  max-width: 100%;
+  max-height: 300px;
   object-fit: contain;
-  border-radius: 14px;
-  background: #eaf0ea;
+  margin: 20px auto;
+  border-radius: 15px;
 }
 
-.file-name {
-  font-size: 12px;
-  margin: 10px;
-  color: var(--green);
-}
-
-.ai-note {
-  margin-top: 24px;
-  font-size: 12px;
-  color: #7b887f;
-}
-
-.result-box {
+.result {
   display: none;
-  margin: 20px auto 0;
-  max-width: 500px;
-  background: #fff4e3;
-  border-radius: 12px;
-  padding: 15px;
-  font-size: 13px;
-  color: #875a17;
-}
-
-.types {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 20px;
-}
-
-.type-card {
-  background: white;
-  border-radius: 17px;
-  overflow: hidden;
-  box-shadow: 0 7px 25px #153c210d;
-  transition: .3s;
-}
-
-.type-card:hover { transform: translateY(-7px); }
-
-.type-card img {
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-}
-
-.type-info { padding: 20px; }
-
-.type-info h3 {
-  color: var(--dark);
-  margin-bottom: 9px;
-  font-size: 17px;
-}
-
-.type-info p {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.8;
-}
-
-.about {
-  background: #edf7ef;
-}
-
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 45px;
-  align-items: center;
-}
-
-.about-image {
-  width: 100%;
-  height: 360px;
-  object-fit: cover;
-  border-radius: 20px;
-}
-
-.about-text h2 {
-  font-size: 30px;
-  color: var(--dark);
-  margin-bottom: 20px;
-}
-
-.about-text p {
-  font-size: 14px;
-  color: #627268;
-  line-height: 2;
-  margin-bottom: 17px;
-}
-
-.tech-list {
-   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
   margin-top: 20px;
+  padding: 20px;
+  background: var(--green-light);
+  border-radius: 15px;
 }
 
-.tech {
-  background: white;
-  color: var(--green);
-  border: 1px solid #d6eadd;
-  padding: 10px 14px;
-  border-radius: 9px;
-  font-size: 12px;
-  font-weight: 700;
+.result.show {
+  display: block;
 }
 
-.guide-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 20px;
+.history-item {
+  padding: 17px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-.guide-card {
-  background: white;
-  border: 1px solid #e8eee9;
-  padding: 27px;
-  border-radius: 17px;
+.history-item img {
+  width: 65px;
+  height: 65px;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
-.guide-number {
-  background: var(--light);
-  color: var(--green);
-  width: 45px;
-  height: 45px;
-  border-radius: 13px;
-  display: grid;
-  place-items: center;
-  font-size: 19px;
-  font-weight: 800;
-  margin-bottom: 18px;
-}
-
-.guide-card h3 {
-  color: var(--dark);
-  font-size: 15px;
-  margin-bottom: 10px;
-}
-
-.guide-card p {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.9;
-}
-
-.history {
-  background: #f0f7f1;
-}
-
-.history-box {
-  max-width: 900px;
-  margin: auto;
-  background: white;
-  padding: 30px;
-  border-radius: 18px;
-  min-height: 160px;
+.history-info {
+  flex: 1;
 }
 
 .empty {
   text-align: center;
-  padding: 30px;
+  padding: 45px 10px;
   color: var(--muted);
-  font-size: 13px;
+}
+
+.steps {
+  display: grid;
+  gap: 18px;
+}
+
+.step {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.step-number {
+  background: var(--green);
+  color: white;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
 }
 
 footer {
-  background: #103e2a;
-  color: white;
-  padding: 45px 7%;
+  background: #eaf5ec;
   text-align: center;
+  padding: 25px;
+  margin-top: 55px;
+  color: var(--muted);
 }
 
-footer h2 {
-  font-size: 23px;
-  margin-bottom: 12px;
-}
-
-footer p {
-  font-size: 12px;
-  color: #b6d0bf;
-  line-height: 2;
-}
-
-footer .footer-links {
-  margin: 20px 0;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 25px;
-  font-size: 12px;
-}
-
-@media(max-width:800px) {
-  nav { padding: 0 5%; }
-  .menu-btn { display: block; }
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 76px;
-    left: 0;
-    width: 100%;
-    background: white;
-    padding: 25px;
+@media(max-width:750px) {
+  .nav {
     flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
   }
-  .nav-links.show { display: flex; }
+
+  .nav-links {
+    justify-content: center;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    padding: 7px 9px;
+  }
+
   .hero {
     grid-template-columns: 1fr;
-    padding: 55px 6%;
+    padding: 30px 22px;
   }
-  .hero-image { height: 270px; }
-  .stats { padding: 0 5%; gap: 8px; }
-  .stat { padding: 17px 5px; }
-  .stat strong { font-size: 19px; }
-  .stat span { font-size: 10px; }
-  .section { padding: 65px 5%; }
-  .types, .guide-grid { grid-template-columns: 1fr 1fr; }
-  .about-grid { grid-template-columns: 1fr; }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    margin-top: 22px;
+  }
 }
-
-@media(max-width:480px) {
-  .types, .guide-grid { grid-template-columns: 1fr; }
-  .section-title h2 { font-size: 25px; }
-  .hero h1 { font-size: 37px; }
-}
-</style>
-</head>
-
-<body>
-
-<nav>
-  <a href="#home" class="logo">
-    <span class="logo-icon">♻️</span>
-    EcoAI
-  </a>
-
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
-
-  <div class="nav-links" id="navLinks">
-    <a href="#home" class="active">Trang chủ</a>
-    <a href="#classify">Phân loại AI</a>
-    <a href="#history">Lịch sử</a>
-    <a href="#about">Giới thiệu</a>
-    <a href="#guide">Hướng dẫn</a>
-    <a href="#classify" class="login">Bắt đầu</a>
-  </div>
-</nav>
-
-<!-- TRANG CHỦ -->
-<section class="hero" id="home">
-  <div>
-    <span class="eyebrow">♻️ CÔNG NGHỆ VÌ MÔI TRƯỜNG XANH</span>
-      <h1>Phân loại rác<br>thông minh cùng <span>AI</span></h1>
-    <p>
-      Ứng dụng trí tuệ nhân tạo vào nhận diện và phân loại rác thải
-      thông qua hình ảnh. Góp phần xây dựng thói quen phân loại rác
-      đúng cách và bảo vệ môi trường sống.
-    </p>
-    <div class="actions">
-      <button class="btn primary"
-      onclick="document.getElementById('classify').scrollIntoView()">
-        Bắt đầu phân loại →
-      </button>
-      <button class="btn secondary"
-      onclick="document.getElementById('guide').scrollIntoView()">
-        Xem hướng dẫn
-      </button>
-    </div>
-  </div>
-
-  <div class="hero-image">
-    <div class="image-caption">
-      Hành động nhỏ hôm nay – Môi trường xanh ngày mai 🌱
-    </div>
-  </div>
-</section>
-
-<!-- THỐNG KÊ -->
-<div class="stats">
-  <div class="stat">
-    <strong>AI</strong>
-    <span>Nhận diện hình ảnh</span>
-  </div>
-  <div class="stat">
-    <strong>6+</strong>
-    <span>Nhóm rác mục tiêu</span>
-  </div>
-  <div class="stat">
-    <strong>24/7</strong>
-    <span>Sẵn sàng sử dụng</span>
-  </div>
-</div>
-
-<!-- PHÂN LOẠI -->
-<section class=
