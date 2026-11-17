@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lịch sử - EcoAI</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <a href="index.html" class="logo">♻ Eco<span>AI</span></a>
+    <div class="nav-links">
+      <a href="index.html">Trang chủ</a>
+      <a href="classify.html">Phân loại AI</a>
+      <a href="history.html" class="active">Lịch sử</a>
+      <a href="about.html">Giới thiệu</a>
+      <a href="guide.html">Hướng dẫn</a>
+    </div>
+  </nav>
+</header>
+
+<main class="container">
+  <div class="page-heading">
+    <span class="eyebrow">YOUR ACTIVITY</span>
+    <h1>Lịch sử phân loại</h1>
+    <p>Quản lý những lần phân loại đã thực hiện trên thiết bị này.</p>
+  </div>
+
+  <section class="panel">
+    <div style="display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap">
+      <h2>🕘 Hoạt động gần đây</h2>
+      <button class="btn btn-outline" onclick="clearHistory()">
+        Xóa lịch sử
+      </button>
+    </div>
+
+    <div id="historyList"></div>
+  </section>
+</main>
+
+<footer>EcoAI – Phân loại rác thông minh</footer>
+
+</body>
+</html>
