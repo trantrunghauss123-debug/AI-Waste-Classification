@@ -1,372 +1,591 @@
 <!DOCTYPE html>
-
 <html lang="vi">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>EcoAI - Phân loại rác thông minh</title>
-
-    <style>
-
-        * {
-
-            margin: 0;
-
-            padding: 0;
-
-            box-sizing: border-box;
-
-        }
-
-        body {
-
-            font-family: Arial, sans-serif;
-
-            background: #f4f8f5;
-
-            color: #24352b;
-
-        }
-
-        header {
-
-            background: white;
-
-            padding: 20px 8%;
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            box-shadow: 0 2px 12px #0000000a;
-
-        }
-
-        .logo {
-
-            font-size: 25px;
-
-            font-weight: bold;
-
-            color: #238653;
-
-        }
-
-        nav a {
-
-            margin-left: 25px;
-
-            text-decoration: none;
-
-            color: #405348;
-
-        }
-
-        .hero {
-
-            text-align: center;
-
-            padding: 75px 20px 45px;
-
-        }
-
-        .hero h1 {
-
-            font-size: 42px;
-
-            margin-bottom: 18px;
-
-            color: #206b43;
-
-        }
-
-        .hero p {
-
-            color: #66766c;
-
-            font-size: 17px;
-
-            line-height: 1.7;
-
-        }
-
-        .container {
-
-            max-width: 850px;
-
-            margin: 0 auto 70px;
-
-            padding: 35px;
-
-            background: white;
-
-            border-radius: 22px;
-
-            box-shadow: 0 8px 30px #0000000c;
-
-        }
-
-        .upload {
-
-            border: 2px dashed #91c9a5;
-
-            background: #f5fbf6;
-
-            padding: 45px 20px;
-
-            border-radius: 18px;
-
-            text-align: center;
-
-        }
-
-        .upload h2 {
-
-            color: #287b4b;
-
-            margin-bottom: 12px;
-
-        }
-
-        .upload p {
-
-            color: #75857a;
-
-            margin-bottom: 22px;
-
-        }
-
-        input {
-
-            max-width: 100%;
-
-            margin-bottom: 20px;
-
-        }
-
-        button {
-
-            background: #29965a;
-
-            color: white;
-
-            border: none;
-
-            padding: 13px 25px;
-
-            border-radius: 10px;
-
-            font-size: 16px;
-
-            cursor: pointer;
-
-        }
-
-        button:hover {
-
-            background: #207a48;
-
-        }
-
-        #preview {
-
-            display: none;
-
-            max-width: 100%;
-
-            max-height: 300px;
-
-            margin: 20px auto;
-
-            border-radius: 12px;
-
-        }
-
-        #result {
-
-            display: none;
-
-            margin-top: 25px;
-
-            padding: 20px;
-
-            background: #eff8f1;
-
-            border-radius: 14px;
-
-            text-align: center;
-
-        }
-
-        footer {
-
-            text-align: center;
-
-            padding: 25px;
-
-            color: #718077;
-
-        }
-
-        @media(max-width: 600px) {
-
-            header {
-
-                padding: 18px;
-
-            }
-          display: none;
-
-            }
-
-            .hero h1 {
-
-                font-size: 30px;
-
-            }
-
-            .container {
-
-                margin: 0 15px 40px;
-
-                padding: 20px;
-
-            }
-
-        }
-
-    </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoAI - Phân loại rác thông minh</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --green: #16834b;
+  --dark: #104b32;
+  --light: #eaf7ee;
+  --text: #20352a;
+  --muted: #718078;
+  --white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: #f7faf7;
+  color: var(--text);
+}
+
+button { cursor: pointer; font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+
+nav {
+  height: 76px;
+  padding: 0 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 3px 20px #12351b0b;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--green);
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.logo-icon {
+  width: 43px;
+  height: 43px;
+  background: var(--light);
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 600;
+  color: #56665c;
+  transition: .2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active { color: var(--green); }
+
+.login {
+  background: var(--green);
+  color: white !important;
+  padding: 12px 21px;
+  border-radius: 10px;
+}
+
+.menu-btn {
+  display: none;
+  border: 0;
+  background: none;
+  font-size: 25px;
+}
+
+section { scroll-margin-top: 85px; }
+
+.hero {
+  padding: 75px 7%;
+  background: linear-gradient(120deg,#edf8ef,#dcefe1);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 40px;
+  min-height: 530px;
+}
+
+.eyebrow {
+  display: inline-block;
+  padding: 9px 15px;
+  border-radius: 30px;
+  background: #d4efdc;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+
+.hero h1 {
+  font-size: clamp(35px,4.5vw,57px);
+  line-height: 1.22;
+  color: var(--dark);
+  margin-bottom: 22px;
+}
+
+.hero h1 span { color: #27a35c; }
+
+.hero p {
+  color: #63736a;
+  line-height: 1.9;
+  font-size: 15px;
+  max-width: 530px;
+  margin-bottom: 28px;
+}
+
+.actions {
+  display: flex;
+  gap: 13px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 0;
+  border-radius: 11px;
+  padding: 14px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: .25s;
+}
+
+.btn:hover { transform: translateY(-3px); }
+
+.primary {
+  background: var(--green);
+  color: white;
+  box-shadow: 0 7px 18px #16834b35;
+}
+
+.secondary {
+  background: white;
+  color: var(--green);
+  border: 1px solid #cde5d3;
+}
+
+.hero-image {
+  height: 350px;
+  border-radius: 25px;
+  background:
+  linear-gradient(0deg,#073c2460,#073c2400),
+  url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1000')
+  center/cover;
+   box-shadow: 0 20px 50px #174e3030;
+  display: flex;
+  align-items: end;
+  padding: 25px;
+}
+
+.image-caption {
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 18px;
+  padding: 0 7%;
+  margin-top: -1px;
+}
+
+.stat {
+  background: white;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 5px 25px #183b2008;
+}
+
+.stat strong {
+  display: block;
+  font-size: 25px;
+  color: var(--green);
+  margin-bottom: 5px;
+}
+
+.stat span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.section {
+  padding: 90px 7%;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 45px;
+}
+
+.section-title small {
+  color: var(--green);
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.section-title h2 {
+  font-size: 31px;
+  color: var(--dark);
+  margin: 12px 0;
+}
+
+.section-title p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.classify {
+  background: white;
+}
+
+.upload-box {
+  max-width: 850px;
+  margin: auto;
+  background: #f9fcf9;
+  border: 2px dashed #a8d4b4;
+  border-radius: 22px;
+  padding: 45px 25px;
+  text-align: center;
+}
+
+.upload-icon {
+  width: 75px;
+  height: 75px;
+  background: #e4f5e8;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  font-size: 35px;
+  margin: 0 auto 20px;
+}
+
+.upload-box h3 {
+  color: var(--dark);
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.upload-box p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+#fileInput { display: none; }
+
+.preview {
+  max-width: 350px;
+  margin: 25px auto 0;
+  display: none;
+}
+
+.preview img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: #eaf0ea;
+}
+
+.file-name {
+  font-size: 12px;
+  margin: 10px;
+  color: var(--green);
+}
+
+.ai-note {
+  margin-top: 24px;
+  font-size: 12px;
+  color: #7b887f;
+}
+
+.result-box {
+  display: none;
+  margin: 20px auto 0;
+  max-width: 500px;
+  background: #fff4e3;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 13px;
+  color: #875a17;
+}
+
+.types {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+}
+
+.type-card {
+  background: white;
+  border-radius: 17px;
+  overflow: hidden;
+  box-shadow: 0 7px 25px #153c210d;
+  transition: .3s;
+}
+
+.type-card:hover { transform: translateY(-7px); }
+
+.type-card img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+}
+
+.type-info { padding: 20px; }
+
+.type-info h3 {
+  color: var(--dark);
+  margin-bottom: 9px;
+  font-size: 17px;
+}
+
+.type-info p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.about {
+  background: #edf7ef;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 45px;
+  align-items: center;
+}
+
+.about-image {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.about-text h2 {
+  font-size: 30px;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+
+.about-text p {
+  font-size: 14px;
+  color: #627268;
+  line-height: 2;
+  margin-bottom: 17px;
+}
+
+.tech-list {
+   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.tech {
+  background: white;
+  color: var(--green);
+  border: 1px solid #d6eadd;
+  padding: 10px 14px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+}
+
+.guide-card {
+  background: white;
+  border: 1px solid #e8eee9;
+  padding: 27px;
+  border-radius: 17px;
+}
+
+.guide-number {
+  background: var(--light);
+  color: var(--green);
+  width: 45px;
+  height: 45px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.guide-card h3 {
+  color: var(--dark);
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.guide-card p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.history {
+  background: #f0f7f1;
+}
+
+.history-box {
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  min-height: 160px;
+}
+
+.empty {
+  text-align: center;
+  padding: 30px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+footer {
+  background: #103e2a;
+  color: white;
+  padding: 45px 7%;
+  text-align: center;
+}
+
+footer h2 {
+  font-size: 23px;
+  margin-bottom: 12px;
+}
+
+footer p {
+  font-size: 12px;
+  color: #b6d0bf;
+  line-height: 2;
+}
+
+footer .footer-links {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  font-size: 12px;
+}
+
+@media(max-width:800px) {
+  nav { padding: 0 5%; }
+  .menu-btn { display: block; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 76px;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 25px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .nav-links.show { display: flex; }
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 55px 6%;
+  }
+  .hero-image { height: 270px; }
+  .stats { padding: 0 5%; gap: 8px; }
+  .stat { padding: 17px 5px; }
+  .stat strong { font-size: 19px; }
+  .stat span { font-size: 10px; }
+  .section { padding: 65px 5%; }
+  .types, .guide-grid { grid-template-columns: 1fr 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
+}
+
+@media(max-width:480px) {
+  .types, .guide-grid { grid-template-columns: 1fr; }
+  .section-title h2 { font-size: 25px; }
+  .hero h1 { font-size: 37px; }
+}
+</style>
 </head>
 
 <body>
 
-<header>
+<nav>
+  <a href="#home" class="logo">
+    <span class="logo-icon">♻️</span>
+    EcoAI
+  </a>
 
-    <div class="logo">♻ EcoAI</div>
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
 
-    <nav>
+  <div class="nav-links" id="navLinks">
+    <a href="#home" class="active">Trang chủ</a>
+    <a href="#classify">Phân loại AI</a>
+    <a href="#history">Lịch sử</a>
+    <a href="#about">Giới thiệu</a>
+    <a href="#guide">Hướng dẫn</a>
+    <a href="#classify" class="login">Bắt đầu</a>
+  </div>
+</nav>
 
-        <a href="#">Trang chủ</a>
-
-        <a href="#analyze">Phân loại rác</a>
-
-        <a href="#about">Giới thiệu</a>
-
-    </nav>
-
-</header>
-
-<section class="hero">
-
-    <h1>Phân loại rác thông minh cùng AI</h1>
-
+<!-- TRANG CHỦ -->
+<section class="hero" id="home">
+  <div>
+    <span class="eyebrow">♻️ CÔNG NGHỆ VÌ MÔI TRƯỜNG XANH</span>
+      <h1>Phân loại rác<br>thông minh cùng <span>AI</span></h1>
     <p>
-
-        Nhận diện rác thải bằng hình ảnh.
-
-        <br>
-
-        Chung tay xây dựng môi trường xanh và bền vững.
-
+      Ứng dụng trí tuệ nhân tạo vào nhận diện và phân loại rác thải
+      thông qua hình ảnh. Góp phần xây dựng thói quen phân loại rác
+      đúng cách và bảo vệ môi trường sống.
     </p>
-
-</section>
-
-<section class="container" id="analyze">
-
-    <div class="upload">
-
-        <h2>🔍 Phân tích hình ảnh rác thải</h2>
-
-        <p>Tải hình ảnh lên để bắt đầu nhận diện</p>
-
-        <input type="file" id="imageInput" accept="image/*">
-
-        <br>
-
-        <img id="preview" alt="Ảnh xem trước">
-
-        <br>
-
-        <button onclick="analyzeImage()">
-
-            Bắt đầu phân tích
-
-        </button>
-
+    <div class="actions">
+      <button class="btn primary"
+      onclick="document.getElementById('classify').scrollIntoView()">
+        Bắt đầu phân loại →
+      </button>
+      <button class="btn secondary"
+      onclick="document.getElementById('guide').scrollIntoView()">
+        Xem hướng dẫn
+      </button>
     </div>
+  </div>
 
-    <div id="result">
-
-        <h2>Kết quả nhận diện</h2>
-
-        <p id="resultText"></p>
-
+  <div class="hero-image">
+    <div class="image-caption">
+      Hành động nhỏ hôm nay – Môi trường xanh ngày mai 🌱
     </div>
-
+  </div>
 </section>
 
-<section class="hero" id="about">
+<!-- THỐNG KÊ -->
+<div class="stats">
+  <div class="stat">
+    <strong>AI</strong>
+    <span>Nhận diện hình ảnh</span>
+  </div>
+  <div class="stat">
+    <strong>6+</strong>
+    <span>Nhóm rác mục tiêu</span>
+  </div>
+  <div class="stat">
+    <strong>24/7</strong>
+    <span>Sẵn sàng sử dụng</span>
+  </div>
+</div>
 
-    <h2>Vì một hành tinh xanh</h2>
-
-    <p>Phân loại đúng - Tái chế tốt - Môi trường sạch.</p>
-
-</section>
-
-<footer>
-
-    © 2026 EcoAI - AI Waste Classification
-
-</footer>
-
-<script>
-
-    const imageInput = document.getElementById("imageInput");
-
-    const preview = document.getElementById("preview");
-
-    imageInput.addEventListener("change", function() {
-
-        const file = this.files[0];
-
-        if (file) {
-
-            preview.src = URL.createObjectURL(file);
-
-            preview.style.display = "block";
-
-            document.getElementById("result").style.display = "none";
-
-        }
-
-    });
-
-    function analyzeImage() {
-
-        if (!imageInput.files.length) {
-
-            alert("Vui lòng chọn hình ảnh trước!");
-
-            return;
-
-        }
-
-        alert("Giao diện đã sẵn sàng! AI sẽ được tích hợp ở bước tiếp theo.");
-
-    }
-
-</script>
-
-</body>
-
-</html>
-
-            nav {
+<!-- PHÂN LOẠI -->
+<section class=
