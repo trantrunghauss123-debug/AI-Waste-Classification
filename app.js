@@ -296,7 +296,9 @@ if (classifyButton) {
     }
 
     try {
-      const response = await fetch("/api/classify", {
+      const response = await fetch(
+  "https://ecoai-backend.trantrunghauss123.workers.dev/api/classify",
+  {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
