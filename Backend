@@ -1,0 +1,139 @@
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname !== "/api/classify") {
+      return env.ASSETS.fetch(request);
+    }
+
+    if (request.method !== "POST") {
+      return Response.json(
+        { error: "Method not allowed" },
+        { status: 405 }
+      );
+    }
+
+    try {
+      if (!env.GEMINI_API_KEY) {
+        throw new Error("Gemini API Key chưa được cấu hình.");
+      }
+
+      const body = await request.json();
+      const { imageData } = body;
+
+      if (!imageData || typeof imageData !== "string") {
+        return Response.json(
+          { error: "Không tìm thấy hình ảnh." },
+          { status: 400 }
+        );
+      }
+
+      const match = imageData.match(
+        /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/
+      );
+
+      if (!match) {
+        return Response.json(
+          { error: "Định dạng ảnh không hợp lệ." },
+          { status: 400 }
+        );
+      }
+
+      const mimeType = match[1];
+      const base64Image = match[2];
+
+      if (base64Image.length > 8 * 1024 * 1024) {
+        return Response.json(
+          { error: "Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn." },
+          { status: 413 }
+        );
+      }
+
+      const prompt = `
+Bạn là EcoAI, chuyên gia nhận diện và phân loại rác thải.
+
+Hãy phân tích hình ảnh được cung cấp.
+
+Chỉ trả về JSON với cấu trúc:
+{
+  "name": "Tên vật thể",
+  "category": "Nhóm rác",
+  "material": "Chất liệu",
+  "disposal": "Cách xử lý",
+  "recyclable": true,
+  "confidence": 95,
+  "description": "Mô tả vật thể"
+}
+
+Nhóm rác có thể gồm:
+- Rác hữu cơ
+- Rác tái chế
+- Rác vô cơ
+- Rác nguy hại
+
+Nếu không nhìn rõ vật thể, hãy nói rõ không đủ thông tin.
+Không được tự khẳng định khi không chắc chắn.
+`;
+
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": env.GEMINI_API_KEY
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { text: prompt },
+                {
+                  inline_data: {
+                    mime_type: mimeType,
+                    data: base64Image
+                  }
+                }
+              ]
+            }],
+            generationConfig: {
+              responseMimeType: "application/json"
+            }
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Gemini error:", data);
+        return Response.json(
+          { error: "Gemini không thể phân tích ảnh. Hãy thử lại." },
+          { status: 502 }
+        );
+      }
+
+      const text = data.candidates?.[0]?.content?.parts
+?.map(part => part.text || "")
+        .join("");
+
+      if (!text) {
+        throw new Error("Gemini không trả về kết quả.");
+      }
+
+      const result = JSON.parse(text);
+
+      return Response.json({
+        success: true,
+        result
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      return Response.json({
+        success: false,
+        error: error.message || "Đã xảy ra lỗi."
+      }, { status: 500 });
+    }
+  }
+};
