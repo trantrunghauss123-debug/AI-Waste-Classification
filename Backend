@@ -1,40 +1,60 @@
+// ==========================================
+// ECOAI - CLOUDFLARE WORKER BACKEND
+// Gemini AI Image Classification API
+// ==========================================
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // Các trang website được phục vụ từ ASSETS
     if (url.pathname !== "/api/classify") {
       return env.ASSETS.fetch(request);
     }
 
+    // Chỉ chấp nhận POST
     if (request.method !== "POST") {
       return Response.json(
-        { error: "Method not allowed" },
+        {
+          success: false,
+          error: "Method not allowed."
+        },
         { status: 405 }
       );
     }
 
     try {
+
+      // 1. Kiểm tra API KEY
       if (!env.GEMINI_API_KEY) {
-        throw new Error("Gemini API Key chưa được cấu hình.");
+        throw new Error("Chưa cấu hình GEMINI_API_KEY trên Cloudflare.");
       }
 
+      // 2. Nhận dữ liệu hình ảnh
       const body = await request.json();
-      const { imageData } = body;
+      const imageData = body.imageData;
 
       if (!imageData || typeof imageData !== "string") {
         return Response.json(
-          { error: "Không tìm thấy hình ảnh." },
+          {
+            success: false,
+            error: "Không tìm thấy hình ảnh."
+          },
           { status: 400 }
         );
       }
 
+      // 3. Kiểm tra định dạng ảnh
       const match = imageData.match(
         /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/
       );
 
       if (!match) {
         return Response.json(
-          { error: "Định dạng ảnh không hợp lệ." },
+          {
+            success: false,
+            error: "Ảnh không đúng định dạng JPG, PNG hoặc WEBP."
+          },
           { status: 400 }
         );
       }
@@ -42,98 +62,172 @@ export default {
       const mimeType = match[1];
       const base64Image = match[2];
 
+      // 4. Giới hạn dung lượng
       if (base64Image.length > 8 * 1024 * 1024) {
         return Response.json(
-          { error: "Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn." },
+          {
+            success: false,
+            error: "Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn."
+          },
           { status: 413 }
         );
       }
 
+      // 5. Prompt dành cho EcoAI
       const prompt = `
-Bạn là EcoAI, chuyên gia nhận diện và phân loại rác thải.
+Bạn là EcoAI, một hệ thống trí tuệ nhân tạo
+chuyên nhận diện và phân loại rác thải qua hình ảnh.
 
-Hãy phân tích hình ảnh được cung cấp.
+NHIỆM VỤ:
+1. Nhận diện vật thể trong ảnh.
+2. Xác định tên vật thể.
+3. Xác định chất liệu.
+4. Phân loại nhóm rác.
+5. Đưa ra cách xử lý phù hợp.
+6. Đánh giá khả năng tái chế.
 
-Chỉ trả về JSON với cấu trúc:
+CÁC NHÓM RÁC:
+
+- Rác hữu cơ:
+Thức ăn thừa, rau củ, lá cây, vỏ trái cây.
+
+- Rác tái chế:
+Chai nhựa, giấy, bìa carton, kim loại,
+chai thủy tinh và các vật liệu có thể tái chế.
+
+- Rác vô cơ:
+Các loại rác khó tái chế thông thường.
+
+- Rác nguy hại:
+Pin, bóng đèn chứa chất nguy hại,
+hóa chất và các vật liệu độc hại.
+
+QUY TẮC:
+- Chỉ phân loại dựa trên hình ảnh thực tế.
+- Không tự khẳng định nếu hình ảnh không rõ.
+- Nếu có nhiều vật thể, chọn vật thể chính.
+- Hướng dẫn xử lý phải ngắn gọn, dễ hiểu.
+- Độ tin cậy là ước tính của AI, không phải xác suất
+  đã được hiệu chuẩn.
+- Không bịa đặt thông tin về chất liệu.
+
+CHỈ TRẢ VỀ JSON THEO CẤU TRÚC:
+
 {
   "name": "Tên vật thể",
   "category": "Nhóm rác",
   "material": "Chất liệu",
-  "disposal": "Cách xử lý",
+  "disposal": "Hướng dẫn xử lý",
   "recyclable": true,
   "confidence": 95,
   "description": "Mô tả vật thể"
 }
 
-Nhóm rác có thể gồm:
-- Rác hữu cơ
-- Rác tái chế
-- Rác vô cơ
-- Rác nguy hại
-
-Nếu không nhìn rõ vật thể, hãy nói rõ không đủ thông tin.
-Không được tự khẳng định khi không chắc chắn.
+Nếu không thể nhận diện:
+- name: Không xác định
+- category: Không đủ thông tin
+- confidence: 0
+- description: Giải thích lý do không thể nhận diện.
 `;
 
-      const response = await fetch(
+      // 6. Gửi ảnh đến Gemini AI
+      const geminiResponse = await fetch(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
             "x-goog-api-key": env.GEMINI_API_KEY
           },
+
           body: JSON.stringify({
-            contents: [{
-              parts: [
-                { text: prompt },
-                {
-                  inline_data: {
-                    mime_type: mimeType,
-                    data: base64Image
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt
+                  },
+                  {
+                    inline_data: {
+                      mime_type: mimeType,
+                      data: base64Image
+                    }
                   }
-                }
-              ]
-            }],
+                ]
+              }
+            ],
+
             generationConfig: {
-              responseMimeType: "application/json"
+              responseMimeType: "application/json",
+              temperature: 0.2
             }
           })
         }
       );
 
-      const data = await response.json();
+      // 7. Nhận kết quả từ Gemini
+      const geminiData = await geminiResponse.json();
 
-      if (!response.ok) {
-        console.error("Gemini error:", data);
+      if (!geminiResponse.ok) {
+        console.error("Gemini API error:", geminiData);
+
         return Response.json(
-          { error: "Gemini không thể phân tích ảnh. Hãy thử lại." },
+          {
+            success: false,
+            error: "Gemini API gặp lỗi. Hãy kiểm tra API Key và thử lại."
+          },
           { status: 502 }
         );
       }
 
-      const text = data.candidates?.[0]?.content?.parts
-?.map(part => part.text || "")
+      const resultText = geminiData.candidates?.[0]?.content?.parts
+        ?.map(part => part.text || "")
         .join("");
 
-      if (!text) {
+      if (!resultText) {
         throw new Error("Gemini không trả về kết quả.");
       }
 
-      const result = JSON.parse(text);
+      // 8. Chuyển JSON thành dữ liệu
+      const result = JSON.parse(resultText);
 
+      // 9. Kiểm tra kết quả
+      if (!result.name || !result.category) {
+        throw new Error("Kết quả nhận diện không đầy đủ.");
+      }
+
+      // 10. Trả kết quả về website
       return Response.json({
         success: true,
-        result
+        result: {
+          name: result.name,
+          category: result.category,
+          material: result.material || "Chưa xác định",
+          disposal: result.disposal || "Chưa có hướng dẫn",
+          recyclable: typeof result.recyclable === "boolean"
+            ? result.recyclable
+            : null,
+          confidence: Math.max(
+            0,
+            Math.min(100, Number(result.confidence) || 0)
+          ),
+description: result.description || "Không có mô tả."
+        }
       });
 
     } catch (error) {
-      console.error(error);
 
-      return Response.json({
-        success: false,
-        error: error.message || "Đã xảy ra lỗi."
-      }, { status: 500 });
+      // 11. Xử lý lỗi
+      console.error("EcoAI Backend Error:", error);
+
+      return Response.json(
+        {
+          success: false,
+          error: error.message || "Đã xảy ra lỗi hệ thống."
+        },
+        { status: 500 }
+      );
     }
   }
 };
